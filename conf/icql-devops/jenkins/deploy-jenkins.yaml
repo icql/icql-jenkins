@@ -1,0 +1,92 @@
+# deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-jenkins
+  namespace: icql-devops
+  labels:
+    app: deploy-jenkins
+spec:
+  selector:
+    matchLabels:
+      app: pod-jenkins
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pod-jenkins
+    spec:
+      serviceAccountName: cluster-admin
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:latest
+          securityContext:
+            runAsUser: 0 # 设置以ROOT用户运行容器
+            privileged: true # 拥有特权
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: jnlp
+              containerPort: 50000
+          resources:
+            limits:
+              memory: 640Mi
+              cpu: "250m"
+            requests:
+              memory: 256Mi
+              cpu: "100m"
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 300
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: LIMITS_MEMORY
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory
+                  divisor: 1Mi
+            - name: "JAVA_TOOL_OPTIONS"
+              value: "
+                -Dfile.encoding=UTF-8
+                -Dsun.jnu.encoding=UTF-8
+                "
+            - name: "JAVA_OPTS" # 设置变量，指定时区
+              value: "
+                -Xms200m
+                -Xmx200m
+                -XX:+UseG1GC
+                -XX:MaxMetaspaceSize=150m
+                -XX:ReservedCodeCacheSize=40m
+                -Duser.timezone=Asia/Shanghai
+                "
+          volumeMounts:
+            # 挂载docker.sock 和 docker-bin，以便 jenkins 使用宿主机 docker 环境
+            - name: jenkins-docker-sock
+              mountPath: /var/run/docker.sock
+            - name: jenkins-docker-bin
+              mountPath: /usr/bin/docker
+            - name: jenkins-data
+              mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkins-docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+        - name: jenkins-docker-bin
+          hostPath:
+            path: /usr/bin/docker
+        - name: jenkins-data
+          persistentVolumeClaim:
+            claimName: pvc-jenkins

@@ -1,0 +1,6 @@
+# 测试资源
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: icql-test

@@ -1,0 +1,16 @@
+# 集群资源：mysql数据
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-icql-svc-mysql-data
+  labels:
+    app: pv-icql-svc-mysql-data
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/icql-svc/mysql/data"

@@ -1,0 +1,22 @@
+# ingress
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: ingress-frp
+  namespace: icql-devops
+  labels:
+    app: ingress-frp
+spec:
+  tls:
+    - hosts:
+        - devops.frp.icql.work
+      secretName: secret-tls-devops.frp.icql.work
+  rules:
+    - host: devops.frp.icql.work
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: svc-frp
+              servicePort: 8200

@@ -1,0 +1,142 @@
+# deployment
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-ingress-controller
+  namespace: kube-system
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+    app.kubernetes.io/name: nginx-ingress-controller
+    app.kubernetes.io/part-of: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      app.kubernetes.io/name: nginx-ingress-controller
+      app.kubernetes.io/part-of: kube-system
+  template:
+    metadata:
+      labels:
+        addonmanager.kubernetes.io/mode: Reconcile
+        app.kubernetes.io/name: nginx-ingress-controller
+        app.kubernetes.io/part-of: kube-system
+    spec:
+      containers:
+        - name: nginx-ingress-controller
+          image: >-
+            quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.26.2
+          args:
+            - /nginx-ingress-controller
+            - "--configmap=$(POD_NAMESPACE)/nginx-load-balancer-conf"
+            - "--tcp-services-configmap=$(POD_NAMESPACE)/ingress-tcp-services"
+            - "--udp-services-configmap=$(POD_NAMESPACE)/ingress-udp-services"
+            - "--annotations-prefix=nginx.ingress.kubernetes.io"
+            - "--report-node-internal-ip-address"
+          ports:
+            - hostPort: 80
+              containerPort: 80
+              protocol: TCP
+            - hostPort: 443
+              containerPort: 443
+              protocol: TCP
+            - hostPort: 18080
+              containerPort: 18080
+              protocol: TCP
+            - hostPort: 3306
+              containerPort: 3306
+              protocol: TCP
+            - hostPort: 8200
+              containerPort: 8200
+              protocol: TCP
+            - hostPort: 8201
+              containerPort: 8201
+              protocol: TCP
+            - hostPort: 8202
+              containerPort: 8202
+              protocol: UDP
+            - hostPort: 8203
+              containerPort: 8203
+              protocol: TCP
+            - hostPort: 8204
+              containerPort: 8204
+              protocol: TCP
+            - hostPort: 8205
+              containerPort: 8205
+              protocol: TCP
+            - hostPort: 8206
+              containerPort: 8206
+              protocol: TCP
+            - hostPort: 8207
+              containerPort: 8207
+              protocol: TCP
+            - hostPort: 8208
+              containerPort: 8208
+              protocol: TCP
+            - hostPort: 8209
+              containerPort: 8209
+              protocol: TCP
+            - hostPort: 8210
+              containerPort: 8210
+              protocol: TCP
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: "100m"
+            requests:
+              memory: 50Mi
+              cpu: "50m"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - NET_BIND_SERVICE
+              drop:
+                - ALL
+            runAsUser: 33
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60
+      dnsPolicy: ClusterFirst
+      serviceAccountName: cluster-admin
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

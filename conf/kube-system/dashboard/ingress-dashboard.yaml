@@ -1,0 +1,26 @@
+# ingress
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: ingress-dashboard
+  namespace: kube-system
+  labels:
+    app: ingress-dashboard
+  annotations:
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: secret-basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: '需要认证！'
+spec:
+  tls:
+    - hosts:
+        - devops.k8s.icql.work
+      secretName: secret-tls-devops.k8s.icql.work
+  rules:
+    - host: devops.k8s.icql.work
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: kubernetes-dashboard
+              servicePort: 80

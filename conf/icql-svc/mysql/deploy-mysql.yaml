@@ -1,0 +1,55 @@
+# deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-mysql
+  namespace: icql-svc
+  labels:
+    app: deploy-mysql
+spec:
+  selector:
+    matchLabels:
+      app: pod-mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pod-mysql
+    spec:
+      serviceAccountName: cluster-admin
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          securityContext:
+            runAsUser: 0 # 设置以ROOT用户运行容器
+            privileged: true # 拥有特权
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          resources:
+            limits:
+              memory: 640Mi
+              cpu: "200m"
+            requests:
+              memory: 256Mi
+              cpu: "100m"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-mysql
+                  key: MYSQL_ROOT_PASSWORD
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-conf
+              mountPath: /etc/mysql/my.cnf
+              subPath: my.cnf
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: pvc-mysql
+        - name: mysql-conf
+          configMap:
+            name: configmap-mysql-conf

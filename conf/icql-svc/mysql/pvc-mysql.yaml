@@ -1,0 +1,19 @@
+# pvc绑定pv
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-mysql
+  namespace: icql-svc
+  labels:
+    app: pvc-mysql
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  selector:
+    matchLabels:
+      app: pv-icql-svc-mysql-data

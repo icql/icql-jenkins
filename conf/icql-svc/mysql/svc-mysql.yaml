@@ -1,0 +1,16 @@
+# service
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-mysql
+  namespace: icql-svc
+  labels:
+    app: svc-mysql
+spec:
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  selector:
+    app: pod-mysql

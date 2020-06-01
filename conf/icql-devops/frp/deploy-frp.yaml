@@ -1,0 +1,69 @@
+# deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-frp
+  namespace: icql-devops
+  labels:
+    app: deploy-frp
+spec:
+  selector:
+    matchLabels:
+      app: pod-frp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pod-frp
+    spec:
+      serviceAccountName: cluster-admin
+      containers:
+        - name: frp
+          image: icql/frps:0.33.0
+          securityContext:
+            runAsUser: 0 # 设置以ROOT用户运行容器
+            privileged: true # 拥有特权
+          ports:
+            - containerPort: 8200
+            - containerPort: 8201
+            - containerPort: 8202
+            - containerPort: 8203
+            - containerPort: 8204
+            - containerPort: 8205
+            - containerPort: 8206
+            - containerPort: 8207
+            - containerPort: 8208
+            - containerPort: 8209
+            - containerPort: 8210
+          resources:
+            limits:
+              memory: 64Mi
+              cpu: "50m"
+            requests:
+              memory: 32Mi
+              cpu: "25m"
+          livenessProbe:
+            tcpSocket:
+              port: 8200
+            initialDelaySeconds: 300
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8200
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: frp-conf
+              mountPath: /conf/frps.ini
+              subPath: frps.ini
+      volumes:
+        - name: frp-conf
+          configMap:
+            name: configmap-frp-conf

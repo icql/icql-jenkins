@@ -1,0 +1,12 @@
+# configmap
+# ingress 默认不支持暴露 tcp/udp
+# 如有需要，可以通过配置这两个 configmap 对外暴露
+# 并且需要在 ingress-controller 容器中开放对应的端口
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ingress-udp-services
+  namespace: kube-system
+data:
+  8202: "icql-devops/svc-frp:8202"

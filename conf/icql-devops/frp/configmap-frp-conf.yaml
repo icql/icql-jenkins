@@ -1,0 +1,23 @@
+# configmap
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-frp-conf
+  namespace: icql-devops
+  labels:
+    app: configmap-frp-conf
+data:
+  frps.ini: |
+    [common]
+    token = ###isd-10###
+    bind_port = 8201
+    bind_udp_port = 8202
+    tcp_mux = false
+    log_file = /log/frps.log
+    log_level = info
+    log_max_days = 3
+    dashboard_port = 8200
+    dashboard_user = root
+    dashboard_pwd = ###isd-0###18
+    allow_ports = 8203-8210

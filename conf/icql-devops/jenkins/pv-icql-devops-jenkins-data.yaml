@@ -1,0 +1,16 @@
+# 集群资源：jenkins数据
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-icql-devops-jenkins-data
+  labels:
+    app: pv-icql-devops-jenkins-data
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/icql-devops/jenkins/data"

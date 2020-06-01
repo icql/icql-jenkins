@@ -1,0 +1,59 @@
+# deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-templete
+  namespace: 10_namespace-templete
+  labels:
+    app: deploy-templete
+spec:
+  selector:
+    matchLabels:
+      app: pod-templete
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pod-templete
+    spec:
+      serviceAccountName: cluster-admin
+      containers:
+        - name: templete
+          image: icql/templetes:0.33.0
+          securityContext:
+            runAsUser: 0 # 设置以ROOT用户运行容器
+            privileged: true # 拥有特权
+          ports:
+            - containerPort: 8200
+          resources:
+            limits:
+              memory: 64Mi
+              cpu: "50m"
+            requests:
+              memory: 32Mi
+              cpu: "25m"
+          livenessProbe:
+            tcpSocket:
+              port: 8200
+            initialDelaySeconds: 300
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8200
+            initialDelaySeconds: 60
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: templete-conf
+              mountPath: /conf/templetes.ini
+              subPath: templetes.ini
+      volumes:
+        - name: templete-conf
+          configMap:
+            name: configmap-templete-conf

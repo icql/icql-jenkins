@@ -1,0 +1,57 @@
+# service
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-frp
+  namespace: icql-devops
+  labels:
+    app: svc-frp
+spec:
+  ports:
+    - name: dashboard
+      protocol: TCP
+      port: 8200
+      targetPort: 8200
+    - name: bind-tcp-port
+      protocol: TCP
+      port: 8201
+      targetPort: 8201
+    - name: bind-udp-port
+      protocol: UDP
+      port: 8202
+      targetPort: 8202
+    - name: port-8203
+      protocol: TCP
+      port: 8203
+      targetPort: 8203
+    - name: port-8204
+      protocol: TCP
+      port: 8204
+      targetPort: 8204
+    - name: port-8205
+      protocol: TCP
+      port: 8205
+      targetPort: 8205
+    - name: port-8206
+      protocol: TCP
+      port: 8206
+      targetPort: 8206
+    - name: port-8207
+      protocol: TCP
+      port: 8207
+      targetPort: 8207
+    - name: port-8208
+      protocol: TCP
+      port: 8208
+      targetPort: 8208
+    - name: port-8209
+      protocol: TCP
+      port: 8209
+      targetPort: 8209
+    - name: port-8210
+      protocol: TCP
+      port: 8210
+      targetPort: 8210
+  selector:
+    app: pod-frp

@@ -1,0 +1,19 @@
+# pvc绑定pv
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-jenkins
+  namespace: icql-devops
+  labels:
+    app: pvc-jenkins
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  selector:
+    matchLabels:
+      app: pv-icql-devops-jenkins-data

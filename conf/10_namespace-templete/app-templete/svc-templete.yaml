@@ -1,0 +1,17 @@
+# service
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-templete
+  namespace: 10_namespace-templete
+  labels:
+    app: svc-templete
+spec:
+  ports:
+    - name: dashboard
+      protocol: TCP
+      port: 8200
+      targetPort: 8200
+  selector:
+    app: pod-templete

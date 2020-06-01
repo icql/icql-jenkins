@@ -1,0 +1,22 @@
+# ingress
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: ingress-jenkins
+  namespace: icql-devops
+  labels:
+    app: ingress-jenkins
+spec:
+  tls:
+    - hosts:
+        - devops.jenkins.icql.work
+      secretName: secret-tls-devops.jenkins.icql.work
+  rules:
+    - host: devops.jenkins.icql.work
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: svc-jenkins
+              servicePort: 8080

@@ -1,0 +1,12 @@
+# configmap
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-templete
+  namespace: 10_namespace-templete
+  labels:
+    app: configmap-templete
+data:
+  test: |
+    test
