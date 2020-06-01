@@ -1,0 +1,22 @@
+# ingress
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: ingress-nginx-file
+  namespace: icql-static
+  labels:
+    app: ingress-nginx-file
+spec:
+  tls:
+    - hosts:
+        - file.icql.work
+      secretName: secret-tls-file.icql.work
+  rules:
+    - host: file.icql.work
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: svc-nginx
+              servicePort: 82

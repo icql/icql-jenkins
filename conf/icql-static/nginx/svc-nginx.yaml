@@ -1,0 +1,25 @@
+# service
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-nginx
+  namespace: icql-static
+  labels:
+    app: svc-nginx
+spec:
+  ports:
+    - name: home
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: archive
+      protocol: TCP
+      port: 81
+      targetPort: 81
+    - name: file
+      protocol: TCP
+      port: 82
+      targetPort: 82
+  selector:
+    app: pod-nginx

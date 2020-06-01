@@ -1,0 +1,19 @@
+# pvc绑定pv
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-nginx
+  namespace: icql-static
+  labels:
+    app: pvc-nginx
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      app: pv-icql-static-nginx-data

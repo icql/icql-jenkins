@@ -1,0 +1,16 @@
+# 集群资源：nginx数据
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-icql-static-nginx-data
+  labels:
+    app: pv-icql-static-nginx-data
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadOnlyMany
+  hostPath:
+    path: "/data/icql-devops/jenkins/data/workspace/00_ICQL/deploy-static"
