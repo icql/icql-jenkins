@@ -5,7 +5,7 @@ jenkins pipeline（多分支流水线）
 https://devops.jenkins.icql.work
 
 ``` bash
-├──master
+├──icql
 	├──readme-doc（文档）
 	├──sync-gitee-github（gitee-github仓库同步）
 	├──deploy-k8s（k8s通用资源部署）
