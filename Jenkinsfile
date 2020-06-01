@@ -102,7 +102,7 @@ pipeline {
                                 def secretWords = "${ICQL_SECRET_VALUE}".trim().tokenize('|')
                                 for (secretWord in secretWords) {
                                     def secretWordKeyValue = secretWord.trim().tokenize(':')
-                                    sh "sed -i \"s/${secretWordKeyValue[1]}/******/g\" `grep ${secretWordKeyValue[1]} -rl ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/deploy-static/00_home/public` || true"
+                                    sh "sed -i \"s/${secretWordKeyValue[1]}/******/g\" `grep \"${secretWordKeyValue[1]}\" -rl ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/deploy-static/00_home/public` || true"
                                 }
                             }
                         }
@@ -141,7 +141,7 @@ pipeline {
                                     def secretWords = "${ICQL_SECRET_VALUE}".trim().tokenize('|')
                                     for (secretWord in secretWords) {
                                         def secretWordKeyValue = secretWord.trim().tokenize(':')
-                                        sh "sed -i \"s/${secretWordKeyValue[0]}/${secretWordKeyValue[1]}/g\" `grep ${secretWordKeyValue[0]} -rl ./conf/${namespace}` || true"
+                                        sh "sed -i \"s/${secretWordKeyValue[0]}/${secretWordKeyValue[1]}/g\" `grep \"${secretWordKeyValue[0]}\" -rl ./conf/${namespace}` || true"
                                     }
                                 }
                                 //获取app对应的namespace资源文件路径
