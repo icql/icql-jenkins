@@ -12,6 +12,7 @@ readme文档分支，其余每条线均是单独的多分支流水线
 	├──deploy-k8s（k8s通用资源部署）
 	├──deploy-static（k8s静态资源部署）
 	├──deploy-api（api服务CI/CD，TODO）
+    ├──cron-job（定时job，TODO）
 ```
 
 revision-graph：
