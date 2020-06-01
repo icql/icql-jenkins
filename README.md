@@ -4,7 +4,6 @@ jenkins pipeline（多分支流水线）
 
 https://devops.jenkins.icql.work
 
-readme文档分支，其余每条线均是单独的多分支流水线
 ``` bash
 ├──master
 	├──readme-doc（文档）
