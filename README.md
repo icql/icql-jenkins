@@ -1,3 +1,3 @@
 # icql-jenkins
 
-Jenkinsfile 文件仓库
+# 定时任务
