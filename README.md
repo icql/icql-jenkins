@@ -1,3 +1,3 @@
 # icql-jenkins
 
-Jenkinsfile 文件仓库
+## gitee-github仓库同步
