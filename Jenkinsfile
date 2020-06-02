@@ -114,7 +114,7 @@ pipeline {
                                         sh "kubectl rollout status -f ${resourcePath}"
                                     } else {
                                         sh "kubectl apply -f ${resourcePath}"
-                                        sh "(kubectl apply -f ${resourcePath} | grep 'configured') > tmp-RESOURCE_STATUS"
+                                        sh "echo `kubectl apply -f ${resourcePath}` | grep 'configured' > tmp-RESOURCE_STATUS"
                                     }
                                 }
                             }
@@ -126,10 +126,10 @@ pipeline {
     }
 
     post {
-        always {
-            //删除缓存文件
-            sh 'rm -rf tmp*'
-        }
+//        always {
+//            //删除缓存文件
+//            sh 'rm -rf tmp*'
+//        }
         success {
             //执行成功
             sendMessage('成功')
