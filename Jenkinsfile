@@ -115,6 +115,7 @@ pipeline {
                                     } else {
                                         sh 'echo test'
                                         sh "(kubectl apply -f ${resourcePath}) > tmp-RESOURCE_STATUS"
+                                        sh 'cat tmp-RESOURCE_STATUS'
                                     }
                                 }
                             }
