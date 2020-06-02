@@ -102,9 +102,19 @@ pipeline {
                                 for (resource in sortedK8sResources) {
                                     def resourceTypeSortValue = resource.tokenize('@')[0]
                                     def resourcePath = resource.tokenize('@')[1]
-                                    sh "kubectl apply -f ${resourcePath}"
                                     if (resourceTypeSortValue == "1111") {
+                                        def resourceStatus
+                                        if (fileExists('tmp-RESOURCE_STATUS')) {
+                                            resourceStatus = readFile('tmp-RESOURCE_STATUS')
+                                        }
+                                        if (resourceStatus != null && resourceStatus != '') {
+                                            sh "kubectl delete -f ${resourcePath}"
+                                        }
+                                        sh "kubectl apply -f ${resourcePath}"
                                         sh "kubectl rollout status -f ${resourcePath}"
+                                    } else {
+                                        sh "kubectl apply -f ${resourcePath}"
+                                        sh "kubectl apply -f ${resourcePath} | grep \"configured\" > tmp-RESOURCE_STATUS"
                                     }
                                 }
                             }
@@ -116,6 +126,10 @@ pipeline {
     }
 
     post {
+        always {
+            //删除缓存文件
+            sh 'rm -rf tmp*'
+        }
         success {
             //执行成功
             sendMessage('成功')
