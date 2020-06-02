@@ -103,19 +103,26 @@ pipeline {
                                     def resourceTypeSortValue = resource.tokenize('@')[0]
                                     def resourcePath = resource.tokenize('@')[1]
                                     if (resourceTypeSortValue == "1111") {
-                                        def resourceStatus
-                                        if (fileExists('tmp-RESOURCE_STATUS')) {
-                                            resourceStatus = readFile('tmp-RESOURCE_STATUS')
+                                        //判断deploy资源是否需要replace
+                                        def needReplace = false
+                                        if (fileExists('tmp-RESOURCE_STATUSES')) {
+                                            def resourceStatuses = readFile('tmp-RESOURCE_STATUSES').trim().tokenize('\n')
+                                            for (resourceStatus in resourceStatuses) {
+                                                if (resourceStatus.endsWith('configured') || resourceStatus.endsWith('created')) {
+                                                    needReplace = true
+                                                    break
+                                                }
+                                            }
                                         }
-                                        if (resourceStatus != null && resourceStatus != '') {
-                                            sh "kubectl delete -f ${resourcePath}"
+                                        if (needReplace) {
+                                            sh "kubectl replace -f ${resourcePath}"
+                                        } else {
+                                            sh "kubectl apply -f ${resourcePath}"
                                         }
-                                        sh "kubectl apply -f ${resourcePath}"
                                         sh "kubectl rollout status -f ${resourcePath}"
                                     } else {
-                                        sh 'echo test'
-                                        sh "(kubectl apply -f ${resourcePath}) > tmp-RESOURCE_STATUS"
-                                        sh 'cat tmp-RESOURCE_STATUS'
+                                        sh "(kubectl apply -f ${resourcePath}) >> tmp-RESOURCE_STATUSES"
+                                        sh 'cat tmp-RESOURCE_STATUSES'
                                     }
                                 }
                             }
@@ -127,10 +134,10 @@ pipeline {
     }
 
     post {
-//        always {
-//            //删除缓存文件
-//            sh 'rm -rf tmp*'
-//        }
+        always {
+            //删除缓存文件
+            sh 'rm -rf tmp*'
+        }
         success {
             //执行成功
             sendMessage('成功')
