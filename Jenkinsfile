@@ -167,9 +167,26 @@ pipeline {
                                 for (resource in sortedK8sResources) {
                                     def resourceTypeSortValue = resource.tokenize('@')[0]
                                     def resourcePath = resource.tokenize('@')[1]
-                                    sh "kubectl apply -f ${resourcePath}"
                                     if (resourceTypeSortValue == "1111") {
+                                        //判断deploy资源是否需要replace
+                                        def needReplace = false
+                                        if (fileExists('tmp-RESOURCE_STATUSES')) {
+                                            def resourceStatuses = readFile('tmp-RESOURCE_STATUSES').trim().tokenize('\n')
+                                            for (resourceStatus in resourceStatuses) {
+                                                if (resourceStatus.endsWith('configured') || resourceStatus.endsWith('created')) {
+                                                    needReplace = true
+                                                    break
+                                                }
+                                            }
+                                        }
+                                        if (needReplace) {
+                                            sh "kubectl replace -f ${resourcePath}"
+                                        } else {
+                                            sh "kubectl apply -f ${resourcePath}"
+                                        }
                                         sh "kubectl rollout status -f ${resourcePath}"
+                                    } else {
+                                        sh "(kubectl apply -f ${resourcePath}) >> tmp-RESOURCE_STATUSES"
                                     }
                                 }
                             }
