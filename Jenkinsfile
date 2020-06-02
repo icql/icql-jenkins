@@ -113,7 +113,6 @@ pipeline {
                                         sh "kubectl apply -f ${resourcePath}"
                                         sh "kubectl rollout status -f ${resourcePath}"
                                     } else {
-                                        sh "kubectl apply -f ${resourcePath}"
                                         sh "kubectl apply -f ${resourcePath} | grep configured\$ > tmp-RESOURCE_STATUS"
                                     }
                                 }
