@@ -122,7 +122,6 @@ pipeline {
                                         sh "kubectl rollout status -f ${resourcePath}"
                                     } else {
                                         sh "(kubectl apply -f ${resourcePath}) >> tmp-RESOURCE_STATUSES"
-                                        sh 'cat tmp-RESOURCE_STATUSES'
                                     }
                                 }
                             }

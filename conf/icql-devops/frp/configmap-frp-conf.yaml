@@ -16,7 +16,7 @@ data:
     tcp_mux = false
     log_file = /log/frps.log
     log_level = info
-    log_max_days = 3
+    log_max_days = 5
     dashboard_port = 8200
     dashboard_user = root
     dashboard_pwd = ###isd-0###18
