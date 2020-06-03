@@ -171,6 +171,7 @@ pipeline {
                                         //判断deploy资源是否需要replace
                                         def needReplace = false
                                         if (fileExists('tmp-RESOURCE_STATUSES')) {
+                                            sh 'cat tmp-RESOURCE_STATUSES'
                                             def resourceStatuses = readFile('tmp-RESOURCE_STATUSES').trim().tokenize('\n')
                                             for (resourceStatus in resourceStatuses) {
                                                 if (resourceStatus.endsWith('configured') || resourceStatus.endsWith('created')) {
@@ -200,6 +201,7 @@ pipeline {
     post {
         always {
             sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-hexo"
+            sh 'rm -rf tmp-*'
         }
         success {
             //执行成功
