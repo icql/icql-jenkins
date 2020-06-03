@@ -124,6 +124,8 @@ pipeline {
                                         sh "(kubectl apply -f ${resourcePath}) >> tmp-RESOURCE_STATUSES"
                                     }
                                 }
+                                sh 'cat tmp-RESOURCE_STATUSES'
+                                sh 'rm -rf tmp-*'
                             }
                         }
                     }
