@@ -171,7 +171,6 @@ pipeline {
                                         //判断deploy资源是否需要replace
                                         def needReplace = false
                                         if (fileExists('tmp-RESOURCE_STATUSES')) {
-                                            sh 'cat tmp-RESOURCE_STATUSES'
                                             def resourceStatuses = readFile('tmp-RESOURCE_STATUSES').trim().tokenize('\n')
                                             for (resourceStatus in resourceStatuses) {
                                                 if (resourceStatus.endsWith('configured') || resourceStatus.endsWith('created')) {
@@ -181,15 +180,17 @@ pipeline {
                                             }
                                         }
                                         if (needReplace) {
-                                            sh "kubectl replace -f ${resourcePath}"
+                                            sh "kubectl replace -f ${resourcePath} >> tmp-RESOURCE_STATUSES"
                                         } else {
-                                            sh "kubectl apply -f ${resourcePath}"
+                                            sh "kubectl apply -f ${resourcePath} >> tmp-RESOURCE_STATUSES"
                                         }
                                         sh "kubectl rollout status -f ${resourcePath}"
                                     } else {
                                         sh "(kubectl apply -f ${resourcePath}) >> tmp-RESOURCE_STATUSES"
                                     }
                                 }
+                                sh 'cat tmp-RESOURCE_STATUSES'
+                                sh 'rm -rf tmp-*'
                             }
                         }
                     }
