@@ -115,9 +115,9 @@ pipeline {
                                             }
                                         }
                                         if (needReplace) {
-                                            sh "kubectl replace -f ${resourcePath}"
+                                            sh "kubectl replace -f ${resourcePath} >> tmp-RESOURCE_STATUSES"
                                         } else {
-                                            sh "kubectl apply -f ${resourcePath}"
+                                            sh "kubectl apply -f ${resourcePath} >> tmp-RESOURCE_STATUSES"
                                         }
                                         sh "kubectl rollout status -f ${resourcePath}"
                                     } else {
