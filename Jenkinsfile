@@ -21,9 +21,9 @@ pipeline {
                         'icql-devops_frp',
                         'icql-devops_jenkins',
 
-                        'kube-system_dashboard',
-                        'kube-system_metrics',
-                        'kube-system_ingress'
+                        'kube-system_dashboard'//,
+                        //'kube-system_metrics',
+                        //'kube-system_ingress'
                 ],
                 description: '请选择部署的k8s资源')
     }
