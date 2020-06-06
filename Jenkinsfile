@@ -99,7 +99,7 @@ pipeline {
                                     credentialsId: 'icql-secret-dictionary',
                                     usernameVariable: 'ICQL_SECRET_KEY',
                                     passwordVariable: 'ICQL_SECRET_VALUE')]) {
-                                def secretWordsMap = evaluate("${ICQL_SECRET_VALUE}")
+                                def secretWordsMap = evaluate(ICQL_SECRET_VALUE)
                                 secretWordsMap.each {
                                     sh "sed -i \"s/${it.value}/******/g\" `grep \"${it.value}\" -rl ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/deploy-static/00_home/public` || true"
                                 }
@@ -231,7 +231,7 @@ def sendMessage(result) {
             credentialsId: 'icql-secret-dictionary',
             usernameVariable: 'ICQL_SECRET_KEY',
             passwordVariable: 'ICQL_SECRET_VALUE')]) {
-        def secretWordsMap = evaluate("${ICQL_SECRET_VALUE}")
+        def secretWordsMap = evaluate(ICQL_SECRET_VALUE)
         def dingRobot = DINGTALK_ROBOT.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
         sh "curl ${dingRobot} -H 'Content-Type:application/json' -X POST --data '${message}'"
     }
