@@ -137,10 +137,9 @@ pipeline {
                                         credentialsId: 'icql-secret-dictionary',
                                         usernameVariable: 'ICQL_SECRET_KEY',
                                         passwordVariable: 'ICQL_SECRET_VALUE')]) {
-                                    def secretWords = "${ICQL_SECRET_VALUE}".trim().tokenize('|')
-                                    for (secretWord in secretWords) {
-                                        def secretWordKeyValue = secretWord.trim().tokenize(':')
-                                        sh "sed -i \"s/${secretWordKeyValue[0]}/${secretWordKeyValue[1]}/g\" `grep \"${secretWordKeyValue[0]}\" -rl ./conf/${namespace}` || true"
+                                    def secretWordsMap = evaluate(ICQL_SECRET_VALUE)
+                                    secretWordsMap.each { key, value ->
+                                        sh "sed -i \"s/${key}/${value}/g\" `grep \"${key}\" -rl ./conf/${namespace}` || true"
                                     }
                                 }
                                 //获取app对应的namespace资源文件路径
