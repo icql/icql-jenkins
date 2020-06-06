@@ -28,7 +28,7 @@ pipeline {
         DOCKER_VOLUMES_WORKSPACE_PREFIX = '/data/icql-devops/jenkins/data/workspace'
         JENKINS_WORKSPACE_PREFIX = '/var/jenkins_home/workspace'
         DINGTALK_ROBOT_URL = 'https://oapi.dingtalk.com/robot/send?access_token=8b7536c2584146d4e9d37a8e6b38352adc720990e82f4d09c###isd-400###'
-        WECHAT_ROBOT_ACCESS_TOKEN_URL_URL = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=###isd-500###&corpsecret=###isd-510###'
+        WECHAT_ROBOT_ACCESS_TOKEN_URL = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=###isd-500###&corpsecret=###isd-510###'
         WECHAT_ROBOT_URL = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token='
     }
 
