@@ -100,8 +100,8 @@ pipeline {
                                     usernameVariable: 'ICQL_SECRET_KEY',
                                     passwordVariable: 'ICQL_SECRET_VALUE')]) {
                                 def secretWordsMap = evaluate(ICQL_SECRET_VALUE)
-                                secretWordsMap.each {
-                                    sh "sed -i \"s/${it.value}/******/g\" `grep \"${it.value}\" -rl ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/deploy-static/00_home/public` || true"
+                                secretWordsMap.each { key, value ->
+                                    sh "sed -i \"s/${value}/******/g\" `grep \"${value}\" -rl ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/deploy-static/00_home/public` || true"
                                 }
                             }
                         }
