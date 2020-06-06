@@ -259,7 +259,7 @@ def sendMessage(result) {
                 "}"
         //获取微信应用access_token
         def wechatRobotAccessTokenUrl = WECHAT_ROBOT_ACCESS_TOKEN.replaceAll("###isd-500###", secretWordsMap["###isd-500###"]).replaceAll("###isd-510###", secretWordsMap["###isd-510###"])
-        sh "curl -s -- ${wechatRobotAccessTokenUrl} > tmp-WECHAT_ROBOT_ACCESS_TOKEN"
+        sh "curl -s -- \"${wechatRobotAccessTokenUrl}\" > tmp-WECHAT_ROBOT_ACCESS_TOKEN"
         def wechatRobotAccessToken = evaluate(readFile('tmp-WECHAT_ROBOT_ACCESS_TOKEN').trim().replaceAll("\\{", "[").replaceAll("\\}", "]"))["access_token"]
         sh 'rm -rf tmp-*'
         //发送微信消息通知
