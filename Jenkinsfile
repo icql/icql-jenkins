@@ -27,9 +27,9 @@ pipeline {
         GIT_REPONAME = "${BRANCH_NAME.split('-')[1]}-${BRANCH_NAME.split('-')[2]}"
         DOCKER_VOLUMES_WORKSPACE_PREFIX = '/data/icql-devops/jenkins/data/workspace'
         JENKINS_WORKSPACE_PREFIX = '/var/jenkins_home/workspace'
-        DINGTALK_ROBOT = 'https://oapi.dingtalk.com/robot/send?access_token=8b7536c2584146d4e9d37a8e6b38352adc720990e82f4d09c###isd-400###'
-        WECHAT_ROBOT_ACCESS_TOKEN = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=###isd-500###&corpsecret=###isd-510###'
-        WECHAT_ROBOT = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token='
+        DINGTALK_ROBOT_URL = 'https://oapi.dingtalk.com/robot/send?access_token=8b7536c2584146d4e9d37a8e6b38352adc720990e82f4d09c###isd-400###'
+        WECHAT_ROBOT_ACCESS_TOKEN_URL_URL = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=###isd-500###&corpsecret=###isd-510###'
+        WECHAT_ROBOT_URL = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token='
     }
 
     stages {
@@ -234,7 +234,7 @@ def sendMessage(result) {
                 "${latestCommits}\\n" +
                 "\"}}"
         //发送钉钉通知
-        def dingRobot = DINGTALK_ROBOT.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
+        def dingRobot = DINGTALK_ROBOT_URL.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
         sh "curl ${dingRobot} -H 'Content-Type:application/json' -X POST --data '${dingMessage}'"
 
         //组装微信通知内容
@@ -248,7 +248,7 @@ def sendMessage(result) {
                 "                \"title\": \"Deploy-Static通知\",\n" +
                 "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}] ${result}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
-                "                \"picurl\": \"https://file.icql.work/30_picture/1500_jenkins.jpg\"\n" +
+                "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
                 "            }\n" +
                 "        ]\n" +
                 "    },\n" +
@@ -258,13 +258,13 @@ def sendMessage(result) {
                 "    \"duplicate_check_interval\": 1800\n" +
                 "}"
         //获取微信应用access_token
-        def wechatRobotAccessTokenUrl = WECHAT_ROBOT_ACCESS_TOKEN.replaceAll("###isd-500###", secretWordsMap["###isd-500###"]).replaceAll("###isd-510###", secretWordsMap["###isd-510###"])
+        def wechatRobotAccessTokenUrl = WECHAT_ROBOT_ACCESS_TOKEN_URL.replaceAll("###isd-500###", secretWordsMap["###isd-500###"]).replaceAll("###isd-510###", secretWordsMap["###isd-510###"])
         sh "curl -s -- \"${wechatRobotAccessTokenUrl}\" > tmp-WECHAT_ROBOT_ACCESS_TOKEN"
         def wechatRobotAccessToken = evaluate(readFile('tmp-WECHAT_ROBOT_ACCESS_TOKEN').trim().replaceAll("\\{", "[").replaceAll("\\}", "]"))["access_token"]
         sh 'rm -rf tmp-*'
         //发送微信消息通知
         if (wechatRobotAccessToken != null && wechatRobotAccessToken != '') {
-            sh "curl ${WECHAT_ROBOT}${wechatRobotAccessToken} -H 'Content-Type:application/json' -X POST --data '${wechatMessage}'"
+            sh "curl ${WECHAT_ROBOT_URL}${wechatRobotAccessToken} -H 'Content-Type:application/json' -X POST --data '${wechatMessage}'"
         }
     }
 }
