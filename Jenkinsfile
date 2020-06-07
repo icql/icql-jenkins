@@ -245,7 +245,7 @@ def sendMessage(result) {
                 "    \"news\": {\n" +
                 "        \"articles\": [\n" +
                 "            {\n" +
-                "                \"title\": \"Deploy-Static通知\",\n" +
+                "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
                 "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}] ${result}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
                 "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
