@@ -71,7 +71,7 @@ pipeline {
                                     //普通提交
                                     sh "cd tmp-gitee-${GIT_REPONAME} && \
                                     (git log ${GIT_BRANCH} -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ../${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN && \
-                                    (git log ${GIT_BRANCH} -5 --pretty=format:\"• [%t] %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT"
+                                    (git log ${GIT_BRANCH} -5 --pretty=format:\"• [%t] %s（%cn）\") > ../${GIT_REPONAME}_LATEST_COMMITS_TEXT"
                                 }
                             } else if (GIT_REF.contains('refs/tags/')) {
                                 def GIT_TAG = GIT_REF.tokenize('/')[2]
