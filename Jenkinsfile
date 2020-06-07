@@ -147,25 +147,15 @@ def sendMessage(result) {
             latestCommitsText = readFile("${GIT_REPONAME}_LATEST_COMMITS_TEXT").trim()
         }
         sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS_TEXT"
-        def wechatMessage = "{\n" +
-                "    \"toparty\": \"1\",\n" +
-                "    \"agentid\": ${secretWordsMap["###isd-511###"]},\n" +
-                "    \"msgtype\": \"news\",\n" +
-                "    \"news\": {\n" +
-                "        \"articles\": [\n" +
-                "            {\n" +
-                "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
-                "                \"description\": \"${JOB_NAME}/${BUILD_NUMBER}\\n最近同步的内容：\\n${latestCommitsText}\",\n" +
-                "                \"url\": \"${BUILD_URL}\",\n" +
-                "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    },\n" +
-                "    \"safe\": 0,\n" +
-                "    \"enable_id_trans\": 0,\n" +
-                "    \"enable_duplicate_check\": 0,\n" +
-                "    \"duplicate_check_interval\": 1800\n" +
-                "}"
+        def wechatMessage = "{\"toparty\": \"1\",\"agentid\": ${secretWordsMap["###isd-511###"]},\"msgtype\": \"news\",\"news\": {\"articles\": [{\"title\": \"" +
+                "${JOB_NAME.tokenize('/')[0]}${result}" +
+                "\",\"description\": \"" +
+                "${JOB_NAME}/${BUILD_NUMBER}\\n最近同步的内容：\\n${latestCommitsText}" +
+                "\",\"url\": \"" +
+                "${BUILD_URL}" +
+                "\",\"picurl\": \"" +
+                "https://file.icql.work/30_picture/1002_jenkins.jpg" +
+                "\"}]},\"safe\": 0,\"enable_id_trans\": 0,\"enable_duplicate_check\": 0,\"duplicate_check_interval\": 1800}"
         //获取微信应用access_token
         def wechatRobotAccessTokenUrl = "${WECHAT_ROBOT_ACCESS_TOKEN_URL}?corpid=${secretWordsMap["###isd-500###"]}&corpsecret=${secretWordsMap["###isd-510###"]}"
         sh "curl -s -- \"${wechatRobotAccessTokenUrl}\" > tmp-WECHAT_ROBOT_ACCESS_TOKEN"
