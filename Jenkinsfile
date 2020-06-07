@@ -31,7 +31,9 @@ pipeline {
     environment {
         DOCKER_VOLUMES_WORKSPACE_PREFIX = '/data/icql-devops/jenkins/data/workspace'
         JENKINS_WORKSPACE_PREFIX = '/var/jenkins_home/workspace'
-        DINGTALK_ROBOT = 'https://oapi.dingtalk.com/robot/send?access_token=8b7536c2584146d4e9d37a8e6b38352adc720990e82f4d09c###isd-400###'
+        DINGTALK_ROBOT_URL = 'https://oapi.dingtalk.com/robot/send?access_token=8b7536c2584146d4e9d37a8e6b38352adc720990e82f4d09c###isd-400###'
+        WECHAT_ROBOT_ACCESS_TOKEN_URL = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=###isd-500###&corpsecret=###isd-510###'
+        WECHAT_ROBOT_URL = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token='
     }
 
     stages {
@@ -73,10 +75,9 @@ pipeline {
                                         credentialsId: 'icql-secret-dictionary',
                                         usernameVariable: 'ICQL_SECRET_KEY',
                                         passwordVariable: 'ICQL_SECRET_VALUE')]) {
-                                    def secretWords = "${ICQL_SECRET_VALUE}".trim().tokenize('|')
-                                    for (secretWord in secretWords) {
-                                        def secretWordKeyValue = secretWord.trim().tokenize(':')
-                                        sh "sed -i \"s/${secretWordKeyValue[0]}/${secretWordKeyValue[1]}/g\" `grep \"${secretWordKeyValue[0]}\" -rl ./conf/${namespace}` || true"
+                                    def secretWordsMap = evaluate(ICQL_SECRET_VALUE.replaceAll("\\{", "[").replaceAll("\\}", "]"))
+                                    secretWordsMap.each { key, value ->
+                                        sh "sed -i \"s/${key}/${value}/g\" `grep \"${key}\" -rl ./conf/${namespace}` || true"
                                     }
                                 }
                                 //获取app对应的namespace资源文件路径
@@ -151,23 +152,50 @@ pipeline {
 }
 
 def sendMessage(result) {
-    //组装钉钉通知内容
-    def message = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DK 通知\",\"text\":\"" +
-            "### [${JOB_NAME}/${BUILD_NUMBER}](${BUILD_URL}/console) ${result}\\n" +
-            "#### 部署的资源：\\n" +
-            "* ${params.K8S_RESOURCES}\\n" +
-            "\"}}"
-    //发送钉钉通知
     withCredentials([usernamePassword(
             credentialsId: 'icql-secret-dictionary',
             usernameVariable: 'ICQL_SECRET_KEY',
             passwordVariable: 'ICQL_SECRET_VALUE')]) {
-        def dingRobot
-        def secretWords = "${ICQL_SECRET_VALUE}".trim().tokenize('|')
-        for (secretWord in secretWords) {
-            def secretWordKeyValue = secretWord.trim().tokenize(':')
-            dingRobot = DINGTALK_ROBOT.replaceAll(secretWordKeyValue[0], secretWordKeyValue[1])
+        def secretWordsMap = evaluate(ICQL_SECRET_VALUE.replaceAll("\\{", "[").replaceAll("\\}", "]"))
+
+        //组装钉钉通知内容
+        def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DK 通知\",\"text\":\"" +
+                "### [${JOB_NAME}/${BUILD_NUMBER}](${BUILD_URL}/console) ${result}\\n" +
+                "#### 部署的资源：\\n" +
+                "* ${params.K8S_RESOURCES}\\n" +
+                "\"}}"
+        //发送钉钉通知
+        def dingRobot = DINGTALK_ROBOT_URL.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
+        sh "curl ${dingRobot} -H 'Content-Type:application/json' -X POST --data '${dingMessage}'"
+
+        //组装微信通知内容
+        def wechatMessage = "{\n" +
+                "    \"toparty\": \"1\",\n" +
+                "    \"agentid\": ${secretWordsMap["###isd-511###"]},\n" +
+                "    \"msgtype\": \"news\",\n" +
+                "    \"news\": {\n" +
+                "        \"articles\": [\n" +
+                "            {\n" +
+                "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
+                "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}] ${result}\n部署的资源：${params.K8S_RESOURCES}\",\n" +
+                "                \"url\": \"${BUILD_URL}\",\n" +
+                "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"safe\": 0,\n" +
+                "    \"enable_id_trans\": 0,\n" +
+                "    \"enable_duplicate_check\": 0,\n" +
+                "    \"duplicate_check_interval\": 1800\n" +
+                "}"
+        //获取微信应用access_token
+        def wechatRobotAccessTokenUrl = WECHAT_ROBOT_ACCESS_TOKEN_URL.replaceAll("###isd-500###", secretWordsMap["###isd-500###"]).replaceAll("###isd-510###", secretWordsMap["###isd-510###"])
+        sh "curl -s -- \"${wechatRobotAccessTokenUrl}\" > tmp-WECHAT_ROBOT_ACCESS_TOKEN"
+        def wechatRobotAccessToken = evaluate(readFile('tmp-WECHAT_ROBOT_ACCESS_TOKEN').trim().replaceAll("\\{", "[").replaceAll("\\}", "]"))["access_token"]
+        sh 'rm -rf tmp-*'
+        //发送微信消息通知
+        if (wechatRobotAccessToken != null && wechatRobotAccessToken != '') {
+            sh "curl ${WECHAT_ROBOT_URL}${wechatRobotAccessToken} -H 'Content-Type:application/json' -X POST --data '${wechatMessage}'"
         }
-        sh "curl ${dingRobot} -H 'Content-Type:application/json' -X POST --data '${message}'"
     }
 }
