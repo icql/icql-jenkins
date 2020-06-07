@@ -132,8 +132,8 @@ def sendMessage(result) {
                 "${latestCommits}\\n" +
                 "\"}}"
         //发送钉钉通知
-        def dingRobot = DINGTALK_ROBOT_URL.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
-        sh "curl ${dingRobot} -H 'Content-Type:application/json' -X POST --data '${dingMessage}'"
+        def dingRobotUrl = DINGTALK_ROBOT_URL.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
+        sh "curl ${dingRobotUrl} -H 'Content-Type:application/json' -X POST --data '${dingMessage}'"
 
         //组装微信通知内容
         def wechatMessage = "{\n" +
@@ -143,7 +143,7 @@ def sendMessage(result) {
                 "    \"news\": {\n" +
                 "        \"articles\": [\n" +
                 "            {\n" +
-                "                \"title\": \"Sync-Gitee-Github通知\",\n" +
+                "                \"title\": \"${JOB_NAME.tokenize('/')[0]}通知\",\n" +
                 "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}] ${result}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
                 "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
