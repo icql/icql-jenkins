@@ -61,23 +61,28 @@ pipeline {
                                 def GIT_BRANCH = GIT_REF.tokenize('/')[2]
                                 if (GIT_BEFORE == empty40 || GIT_BEFORE == empty8) {
                                     //新增分支
-                                    sh "echo \"* [[${GIT_AFTER.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_AFTER}) 新增分支${GIT_BRANCH}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS"
+                                    sh "echo \"* [[${GIT_AFTER.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_AFTER}) 新增分支${GIT_BRANCH}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
+                                    sh "echo \"• [${GIT_AFTER.take(6)}] 新增分支${GIT_BRANCH}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_TEXT"
                                 } else if (GIT_AFTER == empty40 || GIT_AFTER == empty8) {
                                     //删除分支
-                                    sh "echo \"* [[${GIT_BEFORE.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_BEFORE}) 删除分支${GIT_BRANCH}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS"
+                                    sh "echo \"* [[${GIT_BEFORE.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_BEFORE}) 删除分支${GIT_BRANCH}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
+                                    sh "echo \"• [${GIT_BEFORE.take(6)}] 删除分支${GIT_BRANCH}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_TEXT"
                                 } else {
                                     //普通提交
                                     sh "cd tmp-gitee-${GIT_REPONAME} && \
-                                    (git log ${GIT_BRANCH} -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ../${GIT_REPONAME}_LATEST_COMMITS"
+                                    (git log ${GIT_BRANCH} -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ../${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN && \
+                                    (git log ${GIT_BRANCH} -5 --pretty=format:\"• [%t] %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT"
                                 }
                             } else if (GIT_REF.contains('refs/tags/')) {
                                 def GIT_TAG = GIT_REF.tokenize('/')[2]
                                 if (GIT_BEFORE == empty40 || GIT_BEFORE == empty8) {
                                     //新增标签
-                                    sh "echo \"* [[${GIT_AFTER.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_AFTER}) 新增标签${GIT_TAG}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS"
+                                    sh "echo \"* [[${GIT_AFTER.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_AFTER}) 新增标签${GIT_TAG}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
+                                    sh "echo \"• [${GIT_AFTER.take(6)}] 新增标签${GIT_TAG}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_TEXT"
                                 } else if (GIT_AFTER == empty40 || GIT_AFTER == empty8) {
                                     //删除标签
-                                    sh "echo \"* [[${GIT_BEFORE.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_BEFORE}) 删除标签${GIT_TAG}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS"
+                                    sh "echo \"* [[${GIT_BEFORE.take(6)}]](https://gitee.com/icql/${GIT_REPONAME}/commit/${GIT_BEFORE}) 删除标签${GIT_TAG}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
+                                    sh "echo \"• [${GIT_BEFORE.take(6)}] 删除标签${GIT_TAG}（icql）\" > ${GIT_REPONAME}_LATEST_COMMITS_TEXT"
                                 }
                             }
                         }
@@ -121,21 +126,27 @@ def sendMessage(result) {
         def secretWordsMap = evaluate(ICQL_SECRET_VALUE.replaceAll("\\{", "[").replaceAll("\\}", "]"))
 
         //组装钉钉通知内容
-        def latestCommits = ''
-        if (result == '成功' && fileExists("${GIT_REPONAME}_LATEST_COMMITS")) {
-            latestCommits = readFile("${GIT_REPONAME}_LATEST_COMMITS").trim()
+        def latestCommitsMd = ''
+        if (result == '成功' && fileExists("${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN")) {
+            latestCommitsMd = readFile("${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN").trim()
         }
-        sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS"
+        sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
         def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DS 通知\",\"text\":\"" +
                 "### [${JOB_NAME}/${BUILD_NUMBER}](${BUILD_URL}/console) ${result}\\n" +
                 "#### 最近同步的内容：\\n" +
-                "${latestCommits}\\n" +
+                "${latestCommitsMd}\\n" +
                 "\"}}"
         //发送钉钉通知
         def dingRobotUrl = DINGTALK_ROBOT_URL.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
         sh "curl ${dingRobotUrl} -H 'Content-Type:application/json' -X POST --data '${dingMessage}'"
 
+
         //组装微信通知内容
+        def latestCommitsText = ''
+        if (result == '成功' && fileExists("${GIT_REPONAME}_LATEST_COMMITS_TEXT")) {
+            latestCommitsText = readFile("${GIT_REPONAME}_LATEST_COMMITS_TEXT").trim()
+        }
+        sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS_TEXT"
         def wechatMessage = "{\n" +
                 "    \"toparty\": \"1\",\n" +
                 "    \"agentid\": ${secretWordsMap["###isd-511###"]},\n" +
@@ -144,7 +155,7 @@ def sendMessage(result) {
                 "        \"articles\": [\n" +
                 "            {\n" +
                 "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
-                "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}] ${result}\",\n" +
+                "                \"description\": \"${JOB_NAME}/${BUILD_NUMBER}\n最近同步的内容：\n${latestCommitsText}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
                 "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
                 "            }\n" +
