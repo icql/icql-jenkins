@@ -70,7 +70,7 @@ pipeline {
                             sh "cd ${gitDir} \
                                 && mkdir ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git \
                                 && (git log -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN \
-                                && (git log -5 --pretty=format:\"● [%t] %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT \
+                                && (git log -5 --pretty=format:\"• [%t] %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT \
                                 && cp -R ${gitDir}/00_home/hexo ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-hexo"
                         }
                     }
@@ -253,7 +253,7 @@ def sendMessage(result) {
                 "        \"articles\": [\n" +
                 "            {\n" +
                 "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
-                "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}]\n${latestCommitsText}\",\n" +
+                "                \"description\": \"${JOB_NAME}/${BUILD_NUMBER}\n最近更新的内容：\n${latestCommitsText}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
                 "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
                 "            }\n" +
