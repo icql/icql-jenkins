@@ -155,7 +155,7 @@ def sendMessage(result) {
                 "        \"articles\": [\n" +
                 "            {\n" +
                 "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
-                "                \"description\": \"${JOB_NAME}/${BUILD_NUMBER}\n最近同步的内容：\n${latestCommitsText}\",\n" +
+                "                \"description\": \"${JOB_NAME}/${BUILD_NUMBER}\\n最近同步的内容：\\n${latestCommitsText}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
                 "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
                 "            }\n" +
