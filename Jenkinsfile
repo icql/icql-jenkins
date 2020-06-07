@@ -68,9 +68,8 @@ pipeline {
                             }
                             //获取最近同步的日志，复制hexo文件
                             sh "cd ${gitDir} \
-                                && mkdir ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git \
-                                && (git log -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN \
-                                && (git log -5 --pretty=format:\"• [%t] %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT \
+                                && (git log -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN \
+                                && (git log -5 --pretty=format:\"• [%t] %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_TEXT \
                                 && cp -R ${gitDir}/00_home/hexo ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-hexo"
                         }
                     }
@@ -225,10 +224,10 @@ def sendMessage(result) {
 
         //组装钉钉通知内容
         def latestCommitsMd = ''
-        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN")) {
-            latestCommitsMd = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN").trim()
+        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN")) {
+            latestCommitsMd = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN").trim()
         }
-        sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
+        sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
         def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DS 通知\",\"text\":\"" +
                 "### [${JOB_NAME}/${BUILD_NUMBER}](${BUILD_URL}/console) ${result}\\n" +
                 "#### 最近更新的内容：\\n" +
@@ -241,10 +240,10 @@ def sendMessage(result) {
 
         //组装微信通知内容
         def latestCommitsText = ''
-        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT")) {
-            latestCommitsText = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT").trim()
+        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_TEXT")) {
+            latestCommitsText = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_TEXT").trim()
         }
-        sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT"
+        sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/${GIT_REPONAME}_LATEST_COMMITS_TEXT"
         def wechatMessage = "{\n" +
                 "    \"toparty\": \"1\",\n" +
                 "    \"agentid\": ${secretWordsMap["###isd-511###"]},\n" +
