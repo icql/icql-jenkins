@@ -248,7 +248,7 @@ def sendMessage(result) {
         def wechatMessage = "{\"toparty\": \"1\",\"agentid\": ${secretWordsMap["###isd-511###"]},\"msgtype\": \"news\",\"news\": {\"articles\": [{\"title\": \"" +
                 "${JOB_NAME.tokenize('/')[0]}${result}" +
                 "\",\"description\": \"" +
-                "${JOB_NAME}/${BUILD_NUMBER}\\最近更新的内容：\\n${latestCommitsText}" +
+                "${JOB_NAME}/${BUILD_NUMBER}\\n最近更新的内容：\\n${latestCommitsText}" +
                 "\",\"url\": \"" +
                 "${BUILD_URL}" +
                 "\",\"picurl\": \"" +
