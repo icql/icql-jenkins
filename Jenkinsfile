@@ -177,7 +177,7 @@ def sendMessage(result) {
                 "        \"articles\": [\n" +
                 "            {\n" +
                 "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
-                "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}] ${result}\n部署的资源：${params.K8S_RESOURCES}\",\n" +
+                "                \"description\": \"${JOB_NAME}/${BUILD_NUMBER}\n部署的资源：${params.K8S_RESOURCES}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
                 "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
                 "            }\n" +
