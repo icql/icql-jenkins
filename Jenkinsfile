@@ -128,7 +128,7 @@ def sendMessage(result) {
         //组装钉钉通知内容
         def latestCommitsMd = ''
         if (result == '成功' && fileExists("${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN")) {
-            latestCommitsMd = readFile("${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN").trim()
+            latestCommitsMd = readFile("${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN").trim().replaceAll("\n", "\\n")
         }
         sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
         def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DS 通知\",\"text\":\"" +
@@ -144,7 +144,7 @@ def sendMessage(result) {
         //组装微信通知内容
         def latestCommitsText = ''
         if (result == '成功' && fileExists("${GIT_REPONAME}_LATEST_COMMITS_TEXT")) {
-            latestCommitsText = readFile("${GIT_REPONAME}_LATEST_COMMITS_TEXT").trim()
+            latestCommitsText = readFile("${GIT_REPONAME}_LATEST_COMMITS_TEXT").trim().replaceAll("\n", "\\n")
         }
         sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS_TEXT"
         def wechatMessage = "{\"toparty\": \"1\",\"agentid\": ${secretWordsMap["###isd-511###"]},\"msgtype\": \"news\",\"news\": {\"articles\": [{\"title\": \"" +
