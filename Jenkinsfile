@@ -69,7 +69,8 @@ pipeline {
                             //获取最近同步的日志，复制hexo文件
                             sh "cd ${gitDir} \
                                 && mkdir ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git \
-                                && (git log -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS \
+                                && (git log -5 --pretty=format:\"* [[%t]](https://gitee.com/icql/${GIT_REPONAME}/commit/%H) %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN \
+                                && (git log -5 --pretty=format:\"● [%t] %s（%cn）\") > ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT \
                                 && cp -R ${gitDir}/00_home/hexo ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-hexo"
                         }
                     }
@@ -223,21 +224,27 @@ def sendMessage(result) {
         def secretWordsMap = evaluate(ICQL_SECRET_VALUE.replaceAll("\\{", "[").replaceAll("\\}", "]"))
 
         //组装钉钉通知内容
-        def latestCommits = ''
-        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS")) {
-            latestCommits = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS").trim()
-            sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git"
+        def latestCommitsMd = ''
+        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN")) {
+            latestCommitsMd = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN").trim()
         }
+        sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
         def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DS 通知\",\"text\":\"" +
                 "### [${JOB_NAME}/${BUILD_NUMBER}](${BUILD_URL}/console) ${result}\\n" +
                 "#### 最近更新的内容：\\n" +
-                "${latestCommits}\\n" +
+                "${latestCommitsMd}\\n" +
                 "\"}}"
         //发送钉钉通知
         def dingRobot = DINGTALK_ROBOT_URL.replaceAll("###isd-400###", secretWordsMap["###isd-400###"])
         sh "curl ${dingRobot} -H 'Content-Type:application/json' -X POST --data '${dingMessage}'"
 
+
         //组装微信通知内容
+        def latestCommitsText = ''
+        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT")) {
+            latestCommitsText = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT").trim()
+        }
+        sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS_TEXT"
         def wechatMessage = "{\n" +
                 "    \"toparty\": \"1\",\n" +
                 "    \"agentid\": ${secretWordsMap["###isd-511###"]},\n" +
@@ -246,7 +253,7 @@ def sendMessage(result) {
                 "        \"articles\": [\n" +
                 "            {\n" +
                 "                \"title\": \"${JOB_NAME.tokenize('/')[0]}${result}\",\n" +
-                "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}] ${result}\",\n" +
+                "                \"description\": \"[${JOB_NAME}/${BUILD_NUMBER}]\n${latestCommitsText}\",\n" +
                 "                \"url\": \"${BUILD_URL}\",\n" +
                 "                \"picurl\": \"https://file.icql.work/30_picture/1002_jenkins.jpg\"\n" +
                 "            }\n" +
