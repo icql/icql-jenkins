@@ -122,10 +122,10 @@ def sendMessage(result) {
 
         //组装钉钉通知内容
         def latestCommits = ''
-        if (result == '成功' && fileExists("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS")) {
-            latestCommits = readFile("${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git/${GIT_REPONAME}_LATEST_COMMITS").trim()
+        if (result == '成功' && fileExists("${GIT_REPONAME}_LATEST_COMMITS")) {
+            latestCommits = readFile("${GIT_REPONAME}_LATEST_COMMITS").trim()
         }
-        sh "rm -rf ${JENKINS_WORKSPACE_PREFIX}/00_ICQL/tmp-git"
+        sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS"
         def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DS 通知\",\"text\":\"" +
                 "### [${JOB_NAME}/${BUILD_NUMBER}](${BUILD_URL}/console) ${result}\\n" +
                 "#### 最近同步的内容：\\n" +
