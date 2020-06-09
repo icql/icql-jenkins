@@ -4,7 +4,7 @@ jenkins pipeline（多分支流水线）
 
 https://devops.jenkins.icql.work
 
-详情介绍 [230_k8s-实践](https://icql.work/2020/04/29/200_k8s/230_k8s-%E5%AE%9E%E8%B7%B5/)
+详情介绍 [230_k8s-实践](https://icql.work/2020/04/29/500_k8s/530_k8s-%E5%AE%9E%E8%B7%B5/)
 
 ``` bash
 ├──icql
