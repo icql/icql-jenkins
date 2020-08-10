@@ -131,7 +131,7 @@ def sendMessage(result) {
             latestCommitsMd = readFile("${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN").trim().replaceAll("\\n", "\\\\n")
         }
         sh "rm -rf ${GIT_REPONAME}_LATEST_COMMITS_MARKDOWN"
-        def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"DS 通知\",\"text\":\"" +
+        def dingMessage = "{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"SGG 通知\",\"text\":\"" +
                 "### [${JOB_NAME}/${BUILD_NUMBER}](${BUILD_URL}/console) ${result}\\n" +
                 "#### 最近同步的内容：\\n" +
                 "${latestCommitsMd}\\n" +
