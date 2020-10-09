@@ -3,20 +3,20 @@
 kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
-  name: ingress-templete
-  namespace: 10_namespace-templete
+  name: ingress-template
+  namespace: 10_namespace-template
   labels:
-    app: ingress-templete
+    app: ingress-template
 spec:
   tls:
     - hosts:
         - devops.frp.icql.work
-      secretName: secret-templete
+      secretName: secret-template
   rules:
     - host: devops.frp.icql.work
       http:
         paths:
           - path: /
             backend:
-              serviceName: svc-templete
+              serviceName: svc-template
               servicePort: 8200

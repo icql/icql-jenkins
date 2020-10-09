@@ -29,7 +29,7 @@ spec:
             quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.26.2
           args:
             - /nginx-ingress-controller
-            - "--configmap=$(POD_NAMESPACE)/nginx-load-balancer-conf"
+            - "--configmap=$(POD_NAMESPACE)/ingress-conf"
             - "--tcp-services-configmap=$(POD_NAMESPACE)/ingress-tcp-services"
             - "--udp-services-configmap=$(POD_NAMESPACE)/ingress-udp-services"
             - "--annotations-prefix=nginx.ingress.kubernetes.io"

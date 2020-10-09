@@ -3,7 +3,7 @@
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: "namespace-templete:cluster-admin" # cluter资源，所以加一个命名空间前缀区分
+  name: "namespace-template:cluster-admin" # cluter资源，所以加一个命名空间前缀区分
   annotations:
     rbac.authorization.kubernetes.io/autoupdate: "true"
 roleRef:

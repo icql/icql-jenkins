@@ -3,10 +3,10 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: svc-templete
-  namespace: 10_namespace-templete
+  name: svc-template
+  namespace: 10_namespace-template
   labels:
-    app: svc-templete
+    app: svc-template
 spec:
   ports:
     - name: dashboard
@@ -14,4 +14,4 @@ spec:
       port: 8200
       targetPort: 8200
   selector:
-    app: pod-templete
+    app: pod-template

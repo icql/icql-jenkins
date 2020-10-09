@@ -3,24 +3,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deploy-templete
-  namespace: 10_namespace-templete
+  name: deploy-template
+  namespace: 10_namespace-template
   labels:
-    app: deploy-templete
+    app: deploy-template
 spec:
   selector:
     matchLabels:
-      app: pod-templete
+      app: pod-template
   replicas: 1
   template:
     metadata:
       labels:
-        app: pod-templete
+        app: pod-template
     spec:
       serviceAccountName: cluster-admin
       containers:
-        - name: templete
-          image: icql/templetes:0.33.0
+        - name: template
+          image: icql/templates:0.33.0
           securityContext:
             runAsUser: 0 # 设置以ROOT用户运行容器
             privileged: true # 拥有特权
@@ -50,10 +50,10 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           volumeMounts:
-            - name: templete-conf
-              mountPath: /conf/templetes.ini
-              subPath: templetes.ini
+            - name: template-conf
+              mountPath: /conf/templates.ini
+              subPath: templates.ini
       volumes:
-        - name: templete-conf
+        - name: template-conf
           configMap:
-            name: configmap-templete-conf
+            name: configmap-template-conf

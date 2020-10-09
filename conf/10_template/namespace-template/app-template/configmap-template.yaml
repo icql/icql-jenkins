@@ -3,10 +3,10 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: configmap-templete
-  namespace: 10_namespace-templete
+  name: configmap-template
+  namespace: 10_namespace-template
   labels:
-    app: configmap-templete
+    app: configmap-template
 data:
   test: |
     test
