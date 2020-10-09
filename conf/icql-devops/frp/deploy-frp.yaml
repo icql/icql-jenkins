@@ -20,7 +20,7 @@ spec:
       serviceAccountName: cluster-admin
       containers:
         - name: frp
-          image: icql/frps:0.33.0
+          image: icql/frps:0.34.1
           securityContext:
             runAsUser: 0 # 设置以ROOT用户运行容器
             privileged: true # 拥有特权
