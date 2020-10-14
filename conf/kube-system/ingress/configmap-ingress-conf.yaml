@@ -7,4 +7,7 @@ metadata:
   name: ingress-conf
   namespace: kube-system
 data:
-  3306: "icql-svc/svc-mysql:3306"
+  use-gzip: "true"
+  gzip-level: "4"
+  gzip-types: "application/xml+rss application/atom+xml application/javascript application/x-javascript application/json application/rss+xml application/vnd.ms-fontobject application/x-font-ttf application/x-web-app-manifest+json application/xhtml+xml application/xml font/opentype image/svg+xml image/x-icon text/html text/css text/javascript text/plain text/x-component image/jpeg image/png image/gif"
+  proxy-body-size: "1024m"
