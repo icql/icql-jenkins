@@ -78,7 +78,7 @@ pipeline {
                 stage('hexo generate') {
                     agent {
                         docker {
-                            image 'icql/hexo:0.2.4'
+                            image 'icql/hexo:0.2.5'
                             args "-v ${DOCKER_VOLUMES_WORKSPACE_PREFIX}/00_ICQL/tmp-hexo:/hexo --entrypoint=''"
                         }
                     }
