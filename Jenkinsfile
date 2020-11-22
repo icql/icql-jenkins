@@ -17,6 +17,7 @@ pipeline {
                         'icql-test_nginx',
 
                         'icql-svc_mysql',
+                        'icql-svc_drawio',
 
                         'icql-devops_frp',
                         'icql-devops_jenkins',

@@ -1,0 +1,36 @@
+# deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-drawio
+  namespace: icql-svc
+  labels:
+    app: deploy-drawio
+spec:
+  selector:
+    matchLabels:
+      app: pod-drawio
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pod-drawio
+    spec:
+      serviceAccountName: cluster-admin
+      containers:
+        - name: drawio
+          image: jgraph/drawio:latest
+          securityContext:
+            runAsUser: 0 # 设置以ROOT用户运行容器
+            privileged: true # 拥有特权
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              memory: 640Mi
+              cpu: "200m"
+            requests:
+              memory: 256Mi
+              cpu: "100m"

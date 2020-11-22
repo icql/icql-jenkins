@@ -1,0 +1,16 @@
+# service
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-drawio
+  namespace: icql-svc
+  labels:
+    app: svc-drawio
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: pod-drawio
