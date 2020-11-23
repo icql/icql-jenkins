@@ -20,7 +20,7 @@ spec:
       serviceAccountName: cluster-admin
       containers:
         - name: drawio
-          image: jgraph/drawio:latest
+          image: jgraph/drawio:13.0.2
           securityContext:
             runAsUser: 0 # 设置以ROOT用户运行容器
             privileged: true # 拥有特权
